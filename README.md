@@ -1,40 +1,30 @@
-# 🛒 E-Commerce Price Tracker
+# Smart Price Tracker Project 🛒
 
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)
-![Database](https://img.shields.io/badge/SQLite-LightBlue?style=for-the-badge&logo=sqlite&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
+This is my Python project for the **VITyarthi Build Your Own Project** course. 
 
-> **A robust, automated Python tool designed to track product prices across e-commerce platforms and trigger email notifications when prices drop.**
+## 🎯 Problem Statement
+I noticed that prices on e-commerce websites fluctuate frequently. It is difficult to manually check the website every day to see if a product I want has become cheaper. 
 
----
+**My Solution:**
+I built a Python script that automates this process. It takes a product link, scrapes the current price, and saves it to a database. If the price goes below my budget, it alerts me.
 
-## 📑 Table of Contents
-1. [Project Overview](#-project-overview)
-2. [System Architecture](#-system-architecture)
-3. [Key Features](#-key-features)
-4. [Folder Structure](#-folder-structure)
-5. [Installation & Usage](#-installation--usage)
-6. [Future Scope](#-future-roadmap)
+## ⚙️ How it Works (Architecture)
+The system is modular and has 3 main parts:
+1.  **User Input (Main Module):** I enter the URL and my target price.
+2.  **Scraper Module:** Uses `BeautifulSoup` to download the webpage and extract the price tag.
+3.  **Database Module:** Uses `SQLite` to store the product details and a history of price changes.
 
----
+## 🛠️ Tech Stack Used
+* **Language:** Python 3
+* **Libraries:** `requests`, `bs4` (BeautifulSoup)
+* **Database:** SQLite (built-in)
 
-## 📖 Project Overview
-This project addresses the problem of manual price monitoring. By leveraging web scraping and task scheduling, it allows users to track products on Amazon/eBay without human intervention. It fulfills the academic requirement of **Data Input** (Scraping), **Processing** (Logic), and **Reporting** (Alerts).
-
-**Target Audience:** Smart shoppers and data enthusiasts who want to save money.
-
----
-
-## 🏗 System Architecture
-The system follows a modular data flow. When uploaded to GitHub, the diagram below represents the logic:
-
-```mermaid
-graph LR
-    A[User Input: URL] --> B(Scheduler)
-    B --> C{Scraper Engine}
-    C -->|Request| D[E-Commerce Site]
-    D -->|HTML Data| C
-    C -->|Clean Data| E[(SQLite Database)]
-    E --> F{Price Analyzer}
-    F -->|Price Drop!| G[Email Notification]
-    F -->|No Change| H[Log Data]
+## 🚀 How to Run
+1.  Install the requirements:
+    ```
+    pip install -r requirements.txt
+    ```
+2.  Run the main file:
+    ```
+    python main.py
+    ```
