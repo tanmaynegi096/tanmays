@@ -1,0 +1,73 @@
+import sqlite3
+import datetime
+
+# Global variable for database name
+DB_NAME = "tracker_data.db"
+
+def connect_db():
+    """Connects to the database and returns the connection object"""
+    conn = sqlite3.connect(DB_NAME)
+    return conn
+
+def create_tables():
+    """Creates the necessary tables if they don't exist"""
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    # Table to store product details
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            url TEXT NOT NULL,
+            target_price REAL
+        )
+    ''')
+    
+    # Table to keep a history of prices
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER,
+            price REAL,
+            date TEXT,
+            FOREIGN KEY(product_id) REFERENCES products(id)
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
+
+def add_product(name, url, target_price):
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("INSERT INTO products (name, url, target_price) VALUES (?, ?, ?)", 
+                       (name, url, target_price))
+        conn.commit()
+        print(f"Success: Added '{name}' to database.")
+    except Exception as e:
+        print("Error adding product:", e)
+    finally:
+        conn.close()
+
+def get_all_products():
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM products")
+    data = cursor.fetchall()
+    conn.close()
+    return data
+
+def save_price(product_id, price):
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    # Get current date and time
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    cursor.execute("INSERT INTO prices (product_id, price, date) VALUES (?, ?, ?)", 
+                   (product_id, price, now))
+    conn.commit()
+    conn.close()
