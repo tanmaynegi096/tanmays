@@ -1,0 +1,65 @@
+import database
+import scraper
+import time
+
+def main():
+    # Make sure database exists before starting
+    print("Initializing database...")
+    database.create_tables()
+    
+    while True:
+        print("\n=== E-COMMERCE PRICE TRACKER ===")
+        print("1. Add New Product")
+        print("2. Check Prices Now")
+        print("3. View All Products")
+        print("4. Exit")
+        
+        choice = input("Enter choice (1-4): ")
+
+        if choice == '1':
+            name = input("Enter Product Name (e.g., iPhone 13): ")
+            url = input("Enter Product URL: ")
+            try:
+                price = float(input("Enter Target Price (e.g., 50000): "))
+                database.add_product(name, url, price)
+            except ValueError:
+                print("Error: Price must be a number.")
+            
+        elif choice == '2':
+            print("Checking prices...")
+            products = database.get_all_products()
+            
+            if not products:
+                print("No products found. Add one first!")
+                continue
+
+            for p in products:
+                # p[0] is ID, p[1] is Name, p[2] is URL, p[3] is Target Price
+                pid, name, url, target = p[0], p[1], p[2], p[3]
+                
+                print(f"Checking {name}...")
+                current_price = scraper.get_price(url)
+                
+                if current_price:
+                    print(f" -> Current Price: {current_price}")
+                    database.save_price(pid, current_price)
+                    
+                    if current_price < target:
+                        print(f"*** ALERT! PRICE DROP FOR {name}! Target: {target}, Current: {current_price} ***")
+                else:
+                    print(f" -> Failed to get price for {name}")
+                    
+        elif choice == '3':
+            products = database.get_all_products()
+            print("\n--- TRACKED PRODUCTS ---")
+            for p in products:
+                print(f"ID: {p[0]} | Name: {p[1]} | Target Price: {p[3]}")
+                
+        elif choice == '4':
+            print("Exiting...")
+            break
+        else:
+            print("Invalid input, please try again.")
+
+if __name__ == "__main__":
+    main()
